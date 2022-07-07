@@ -1,0 +1,22 @@
+{
+  "name": "git-workflows",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:sass": "sass src/sass/main.scss dist/style.min.css --style=compressed --source-map-urls=relative"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiN1One/git-workflows.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MiN1One/git-workflows/issues"
+  },
+  "homepage": "https://github.com/MiN1One/git-workflows#readme",
+  "dependencies": {
+    "sass": "^1.53.0"
+  }
+}

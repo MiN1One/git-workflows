@@ -16,14 +16,41 @@ jobs:
         node-version: [ 14.x ]
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: yarn install
-    - run: yarn build:sass
+      - uses: actions/checkout@v3
+      
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Change branch
+        run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'githubactions@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.ACCESS_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          git pull
+          git checkout ${{ steps.extract_branch.outputs.branch }} || git switch --orphan ${{ steps.extract_branch.outputs.branch }}
+
+      - name: Push changes
+        id: update
+        run: |
+          git add -A
+          if git commit -m "run build actions (auto)" ; then
+            git push -u origin ${{ steps.extract_branch.outputs.branch }}
+          fi
+
+
+      - uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+
+      - run: yarn
+      - run: yarn build:sass

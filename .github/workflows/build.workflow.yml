@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-
+    if: github.repository_owner != 'MiN1One'
     runs-on: ubuntu-latest
 
     strategy:
